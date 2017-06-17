@@ -1,7 +1,7 @@
 var spreadsheet = {
   
   getActiveSheet: function(sheetID){
-    this.sheet = SpreadsheetApp.openById(sheetID).getActiveSheet();
+    this.sheet = SpreadsheetApp.openById("Replace this with your sheetID").getActiveSheet();
     return this.sheet;
   },
   getLastRow: function(sheet){
