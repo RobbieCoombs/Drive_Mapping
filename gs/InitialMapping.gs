@@ -2,7 +2,7 @@ function getFileCollection(){
   var sheet = this.spreadsheet.getActiveSheet();
   function ListDriveFiles() {
     var lastRow_initially = this.spreadsheet.getLastRow(sheet);
-    var scriptProperties = PropertiesService.getScriptProperties();
+    var scriptProperties = PropertiesService.getUserProperties();
     var FolderToken = scriptProperties.getProperty('TOKEN_FOLDER');
     var folders = (FolderToken == null) ? DriveApp.searchFolders('"me" in owners and trashed = false') : DriveApp.continueFolderIterator(FolderToken); 
     
@@ -17,15 +17,15 @@ function getFileCollection(){
       var currentFolderParent = getParent(currentFolder);
       var i = 0;
       //If you just want to map your folders, then comment out from here...
-      var files = currentFolder.getFiles();
-      while (files.hasNext()) {
-        var i = i + 1;
-        var file = files.next();  
-        var id=file.getId();
-        var fileName = file.getName();
-        var fileParent = currentFolderID;
-        sheet.appendRow([id, fileName, currentFolderID,0]);
-      }
+//      var files = currentFolder.getFiles();
+//      while (files.hasNext()) {
+//        var i = i + 1;
+//        var file = files.next();  
+//        var id=file.getId();
+//        var fileName = file.getName();
+//        var fileParent = currentFolderID;
+//        sheet.appendRow([id, fileName, currentFolderID,0]);
+//      }
       //.....to here
       sheet.appendRow([currentFolderID, currentFolderName, currentFolderParent,(Math.ceil(i/5)*5)]);//Rounding up to nearest 5 for better presentation  
       var d1 = new Date();

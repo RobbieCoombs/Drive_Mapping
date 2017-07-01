@@ -3,7 +3,7 @@ function init(){
   var sheet = Object.create(spreadsheet).getActiveSheet();
   var sheetLength = sheet.getLastRow();
   if (sheetLength > 1){
-    var spreadsheetData = (PropertiesService.getScriptProperties().getProperty('Folder_Token')) ? getFileCollection() : spreadsheet.getExistingSheetData(sheet,pageToken);
+    var spreadsheetData = (PropertiesService.getUserProperties().getProperty('Folder_Token')) ? getFileCollection() : spreadsheet.getExistingSheetData(sheet,pageToken);
     return spreadsheetData
   }
   else{

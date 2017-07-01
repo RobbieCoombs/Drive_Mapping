@@ -1,7 +1,11 @@
 var spreadsheet = {
-  
+  getDriveMappingID : function(){
+    var existingDriveMappingSheet = DriveApp.getFilesByName("Google_Drive_Mapping").next().getId();
+    return existingDriveMappingSheet;
+  },
   getActiveSheet: function(sheetID){
-    this.sheet = SpreadsheetApp.openById("Replace this with your sheetID").getActiveSheet();
+    var existingDriveMappingSheet = getDriveMappingID();
+    this.sheet = (existingDriveMappingSheet != null) ? SpreadsheetApp.openById(existingDriveMappingSheet).setActiveSheet(SpreadsheetApp.getActiveSpreadsheet().getSheets()[0]) : SpreadsheetApp.create("Google_Drive_Mapping").openById(getDriveMappingID()).setActiveSheet(SpreadsheetApp.getActiveSpreadsheet().getSheets()[0]);
     return this.sheet;
   },
   getLastRow: function(sheet){
