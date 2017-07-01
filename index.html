@@ -299,9 +299,6 @@
               });
 }
 function handleAuthClick(event) {
-  function appendPre(message) {
-  console.log(message);
-}
   var functionToRun = "init";
   function desiredFunction(){
     $("#mynetwork").show();
@@ -338,7 +335,7 @@ function handleAuthClick(event) {
         // Create an execution request object.
         var request = {
           'function': desiredFunction,
-          'devMode': false
+          'devMode': true
         };
 
         // Make the API request.
@@ -350,19 +347,13 @@ function handleAuthClick(event) {
         });
 
         op.execute(function(resp) {
-          if (resp.error && resp.error.code != 3) {
-            var error = resp.error.details[0];
-            appendPre('Script error message: ' + error.errorMessage);
-            if (error.scriptStackTraceElements) {
-              appendPre('Script error stacktrace:');
-              for (var i = 0; i < error.scriptStackTraceElements.length; i++) {
-                var trace = error.scriptStackTraceElements[i];
-                appendPre('\t' + trace.function + ':' + trace.lineNumber);
-              }
-              appendPre('Error calling API:');
-              appendPre(JSON.stringify(resp, null, 2));
-            } 
-          }  else if (resp.error) {
+          console.log(resp); 
+          if (resp.error && resp.error.status) {
+            // The API encountered a problem before the script
+            // started executing.
+            console.log('Error calling API:');
+            console.log(JSON.stringify(resp, null, 2));
+          } else if (resp.error) {
             // The API executed, but the script returned an error.
 
             // Extract the first (and only) set of error details.
