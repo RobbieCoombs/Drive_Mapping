@@ -141,7 +141,7 @@
       // Your Client ID can be retrieved from your project in the Google
       // Developer Console, https://console.developers.google.com
       var CLIENT_ID = '122624950402-nkml4cdmvgod0r669hsmflia3qmv6np8.apps.googleusercontent.com';
-      var network;
+     var network;
       var SCOPES = ['https://www.googleapis.com/auth/activity',
       'https://www.googleapis.com/auth/drive',
       'https://www.googleapis.com/auth/drive.metadata.readonly',
@@ -329,13 +329,12 @@ function handleAuthClick(event) {
        * root Drive folder.
        */
        function callScriptFunction(desiredFunction,token) {
-        //Enter the scriptID of the Google Apps Script below
         var scriptId = "MzO_x6egY5xoZwxsbUO5rXpTUPTUW6PaH";
 
         // Create an execution request object.
         var request = {
           'function': desiredFunction,
-          'devMode': false
+          'devMode': true
         };
 
         // Make the API request.
@@ -347,12 +346,12 @@ function handleAuthClick(event) {
         });
 
         op.execute(function(resp) {
-          console.log(resp); 
+          console.log(resp);
           if (resp.error && resp.error.status) {
             // The API encountered a problem before the script
             // started executing.
-            console.log('Error calling API:');
-            console.log(JSON.stringify(resp, null, 2));
+            appendPre('Error calling API:');
+            appendPre(JSON.stringify(resp, null, 2));
           } else if (resp.error) {
             // The API executed, but the script returned an error.
 
@@ -467,13 +466,15 @@ function handleAuthClick(event) {
       <div class="row">
        
         <div class="col-md-12 main">
-          <h3 class="page-header text-center" id="dashboardHeader" style="display: none;">If this is the first time you've run this app, it will take a while to map your Drive to the specified GSheet.  Subsequent executions of this app will load much faster.</h3>
+          <h5 class="page-header text-center" id="dashboardHeader" style="display: none;">If this is the first time you've run this app, it will take a while to map your Drive to the specified GSheet.  Subsequent executions of this app will load much faster.</h5>
 
           <div class="alert alert-info alert-dismissible" role="alert" id="dashboardHeaderAlert" style="display:none;">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <strong>Tip:</strong> Using your mousewheel over the chart will zoom and out. Clicking and dragging on the chart will navigate around.
           </div>                <div id="authorize-div">
-          <h2 class="text-center text-primary">Authorize access for Google Drive Mapping</h2>
+          <h4 class="text-center text-default">Before Google allows you to use this app, you have to join <a href="https://groups.google.com/forum/#!forum/risky-access-by-unreviewed-apps">this Google Group</a>.  Hopefully this is temporary as I've applied to have this app approved by Google.  The Google Apps Script that is loaded here is available at <a href="https://github.com/RobbieCoombs/Drive_Mapping">this GitHub repository</a> should you wish to look over it.</h4></br>
+
+
           <!--Button for the user to click to initiate auth sequence -->
           <button id="authorize-button" onclick="handleAuthClick();" type="button" class="center-block btn btn-primary">
             Authorize
