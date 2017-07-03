@@ -149,9 +149,41 @@
       'https://www.googleapis.com/auth/script.storage',
       'https://www.googleapis.com/auth/spreadsheets'];
 
+      function fileTableBuilder(folderNode){
+                var query = "'"+folderNode+"'" + " in parents and mimeType != 'application/vnd.google-apps.folder'"
+                $("#selectedFolder_FileList").empty();
+                $("#selectedFolderName").html("<span class='text-success'>Loading, please wait....</span>")
+        gapi.client.init({
+          discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+          clientId: CLIENT_ID,
+          scope: 'https://www.googleapis.com/auth/drive.metadata.readonly'
+        }).then(function(){
+       gapi.client.drive.files.list({
+        'corpora':'user',
+          'q': query,
+          'fields': "files(id, name, mimeType,webViewLink)"
+        }).then(function(response) {
+          $("#selectedFolderName").html("<span class='text-primary'>Selected Folder List</span>")
+          var files = response.result.files;
+          if (files && files.length > 0) {
+            for (var i = 0; i < files.length; i++) {
+              var file = files[i];
+              $("#selectedFolder_FileList").append("<tr><td><a href='"+file.webViewLink+"'>"+file.name+"</a></td></tr>")
+            }
+          } else {
+              $("#selectedFolder_FileList").append("<tr><td><span class='text-danger'>No files in folder</span></td></tr>")
+          }
+        });
+
+        })
+}
+
+ 
+      
       function neighbourhoodHighlight(params) {
     // if something is selected:
     if (params.nodes.length > 0) {
+      fileTableBuilder(params.nodes[0]);
      // var newMemberList = groupMemberList(params.nodes);
      highlightActive = true;
      var i,j;
@@ -203,6 +235,7 @@
       }
     }
     else if (highlightActive === true) {
+                      $("#selectedFolder_FileList").empty();
       // reset all nodes
       for (var nodeId in allNodes) {
         allNodes[nodeId].color = undefined;
@@ -291,6 +324,7 @@
   });
 
   network.once("stabilizationIterationsDone", function() {
+    $("#dashboardHeader").hide();
     document.getElementById('loadingBarText').innerHTML = '100%';
     document.getElementById('loadingBarInnerBar').style.width = '496px';
     document.getElementById('loadingBarHolder').style.opacity = 0;
@@ -302,7 +336,8 @@ function handleAuthClick(event) {
   var functionToRun = "init";
   function desiredFunction(){
     $("#mynetwork").show();
-    $("#dashboardHeader").hide();
+    $("#selectedFolderDiv").show();
+    // $("#dashboardHeader").hide();
     callScriptFunction(functionToRun);
   }
   function handleAuthResult(authResult) {
@@ -328,7 +363,8 @@ function handleAuthClick(event) {
        * Calls an Apps Script function to list the folders in the user's
        * root Drive folder.
        */
-       function callScriptFunction(desiredFunction,token) {
+       function callScriptFunction(desiredFunction,params) {
+            $("#dashboardHeader").show();
         var scriptId = "MzO_x6egY5xoZwxsbUO5rXpTUPTUW6PaH";
 
         // Create an execution request object.
@@ -415,7 +451,8 @@ function handleAuthClick(event) {
             });
             $(".navbar").show();
             $("#dashboardHeaderAlert").show();
-            $("#dashboardHeader").show();
+            $("#selectedFolderFile").show();
+            // $("#dashboardHeader").show();
             if (resp.response.result.relaunch){
               console.log("wooo let's make some more rows!");
               callScriptFunction("getFileCollection");
@@ -465,14 +502,14 @@ function handleAuthClick(event) {
     <div class="container-fluid">
       <div class="row">
        
-        <div class="col-md-12 main">
+        <div class="col-md-8 main">
           <h5 class="page-header text-center" id="dashboardHeader" style="display: none;">If this is the first time you've run this app, it will take a while to map your Drive to the specified GSheet.  Subsequent executions of this app will load much faster.</h5>
 
           <div class="alert alert-info alert-dismissible" role="alert" id="dashboardHeaderAlert" style="display:none;">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <strong>Tip:</strong> Using your mousewheel over the chart will zoom and out. Clicking and dragging on the chart will navigate around.
           </div>                <div id="authorize-div">
-          <h4 class="text-center text-default">Before Google allows you to use this app, you have to join <a href="https://groups.google.com/forum/#!forum/risky-access-by-unreviewed-apps">this Google Group</a>.  Hopefully this is temporary as I've applied to have this app approved by Google.  The Google Apps Script that is loaded here is available at <a href="https://github.com/RobbieCoombs/Drive_Mapping">this GitHub repository</a> should you wish to look over it.</h4></br>
+          <h4 class="text-center text-default">Before Google allows you to use this app, you have to join <a href="https://groups.google.com/forum/#!forum/risky-access-by-unreviewed-apps">this Google Group</a>.  Hopefully this is temporary as I've applied to have this app approved by Google.  The Google Apps Script that is loaded here is available at <a href="https://github.com/RobbieCoombs/Drive_Mapping">this GitHub repository</a> should you wish to look over it.</h4>
 
 
           <!--Button for the user to click to initiate auth sequence -->
@@ -504,6 +541,19 @@ function handleAuthClick(event) {
       </div>
 
 
+       
+        <div id="selectedFolderDiv" style="display:none" class="col-md-4 main table-responsive">
+          <h5 id="selectedFolderName">Selected folder list</h5>
+          <table class="table table-striped"> 
+            <thead> 
+              <tr>
+                <th>Filename</th> 
+              </tr> 
+            </thead> 
+            <tbody id="selectedFolder_FileList"> 
+            </tbody> 
+          </table>
+      </div>
     </div>
   </div>
 </div>
